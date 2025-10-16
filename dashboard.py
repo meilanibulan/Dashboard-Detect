@@ -1,9 +1,6 @@
 import os
-os.environ["OPENCV_VIDEOIO_PRIORITY_MSMF"] = "0"
-os.environ["OPENCV_VIDEOIO_PRIORITY_GSTREAMER"] = "0"
-os.environ["QT_QPA_PLATFORM"] = "offscreen"
-os.environ["MPLCONFIGDIR"] = "/tmp/matplotlib"
-os.environ["DISPLAY"] = ":0"
+os.system("pip uninstall -y opencv-python opencv-contrib-python || true")
+os.system("pip install opencv-python-headless==4.12.0.88 --no-cache-dir")
 
 
 import streamlit as st
