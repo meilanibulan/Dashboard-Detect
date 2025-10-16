@@ -4,109 +4,128 @@ import tensorflow as tf
 from tensorflow.keras.preprocessing import image
 import numpy as np
 from PIL import Image
-import io
+import cv2
 
 # ==========================
-# Custom CSS untuk tampilan mirip UI cantik pastel
+# 🌸 Setup Page
 # ==========================
+st.set_page_config(
+    page_title="Image Detector Bulan",
+    page_icon="🌸",
+    layout="centered"
+)
+
+# Custom CSS
 st.markdown("""
     <style>
-    body {
-        background-color: #fdfdfd;
-    }
-    .main {
-        background-color: #ffffff;
-        border-radius: 20px;
-        padding: 30px;
-    }
-    .stApp {
-        background-color: #FCEBEA;
-    }
-    .title {
-        color: #070F4E;
-        text-align: center;
-        font-weight: 700;
-        font-size: 32px;
-    }
-    .subtitle {
-        color: #555;
-        text-align: center;
-        font-size: 18px;
-        margin-bottom: 30px;
-    }
-    .upload-box {
-        background-color: #FFE7E6;
-        padding: 20px;
-        border-radius: 20px;
-        text-align: center;
-    }
-    .result-card {
-        background-color: white;
-        border-radius: 20px;
-        padding: 20px;
-        box-shadow: 0px 2px 10px rgba(0,0,0,0.05);
-        margin-top: 20px;
-    }
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+
+        html, body, [class*="css"] {
+            font-family: 'Poppins', sans-serif;
+            background-color: #FBE8E7;
+        }
+
+        .stApp {
+            background-color: #FBE8E7;
+        }
+
+        .title {
+            text-align: center;
+            color: #D77FA1;
+            font-weight: 700;
+            font-size: 2.2em;
+        }
+
+        .sub {
+            text-align: center;
+            color: #555;
+            font-size: 1em;
+        }
+
+        .stButton button {
+            background-color: #F2B5D4;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 0.6em 1.2em;
+            font-weight: 600;
+            transition: 0.3s;
+        }
+
+        .stButton button:hover {
+            background-color: #E59BC0;
+        }
+
+        .css-1cpxqw2, .stTextInput, .stFileUploader label {
+            color: #444;
+        }
+
+        .uploadedImage {
+            border-radius: 20px;
+            box-shadow: 0px 0px 12px rgba(0,0,0,0.1);
+        }
+
     </style>
 """, unsafe_allow_html=True)
 
 # ==========================
-# Load Models
+# 🌷 Load Models
 # ==========================
 @st.cache_resource
 def load_models():
-    yolo_model = YOLO("model/Meilani Bulandari Hsb_Laporan 4.pt")  # YOLO model
-    classifier = tf.keras.models.load_model("model/Meilani Bulandari Hsb_Laporan 2.h5")  # CNN classifier
+    yolo_model = YOLO("model/Meilani Bulandari Hsb_Laporan 4.pt")
+    classifier = tf.keras.models.load_model("model/Meilani Bulandari Hsb_Laporan 2.h5")
     return yolo_model, classifier
 
 yolo_model, classifier = load_models()
 
 # ==========================
-# UI
+# 💫 UI Header
 # ==========================
-st.markdown("<h1 class='title'>AI Image Detection Dashboard</h1>", unsafe_allow_html=True)
-st.markdown("<p class='subtitle'>Deteksi dan klasifikasikan gambar ke dalam kategori Animal, Fashion, Food, atau Nature 🌸</p>", unsafe_allow_html=True)
+st.markdown("<h1 class='title'>AI Image Detection & Classification</h1>", unsafe_allow_html=True)
+st.markdown("<p class='sub'>Deteksi objek dan klasifikasikan gambar menjadi Animal, Fashion, Food, atau Nature 🪷</p>", unsafe_allow_html=True)
 
-menu = st.sidebar.radio("📂 Pilih Mode", ["🕵️‍♀️ Deteksi Objek (YOLO)", "🧩 Klasifikasi Gambar"])
-uploaded_file = st.file_uploader("Unggah gambar kamu di sini 💖", type=["jpg", "jpeg", "png"])
+# ==========================
+# 📂 File Upload
+# ==========================
+uploaded_file = st.file_uploader("Upload gambar kamu di sini!", type=["jpg", "jpeg", "png"])
 
 if uploaded_file is not None:
-    image_bytes = uploaded_file.read()
-    img = Image.open(io.BytesIO(image_bytes))
-    
-    col1, col2 = st.columns([1, 1])
+    img = Image.open(uploaded_file)
+    st.image(img, caption="Gambar yang diunggah", use_container_width=True, output_format="auto", clamp=True)
 
-    with col1:
-        st.markdown("<div class='upload-box'>", unsafe_allow_html=True)
-        st.image(img, caption="Gambar yang Diupload", use_container_width=True)
-        st.markdown("</div>", unsafe_allow_html=True)
+    mode = st.radio(
+        "Pilih mode analisis:",
+        ["Deteksi Objek (YOLO)", "Klasifikasi Gambar"],
+        horizontal=True
+    )
 
-    with col2:
-        if menu == "🕵️‍♀️ Deteksi Objek (YOLO)":
-            st.markdown("<div class='result-card'>", unsafe_allow_html=True)
-            st.subheader("🔍 Hasil Deteksi Objek")
+    if st.button("✨ Jalankan Deteksi"):
+        if mode == "Deteksi Objek (YOLO)":
             results = yolo_model(img)
             result_img = results[0].plot()
             st.image(result_img, caption="Hasil Deteksi", use_container_width=True)
-            st.markdown("</div>", unsafe_allow_html=True)
 
-        elif menu == "🧩 Klasifikasi Gambar":
-            st.markdown("<div class='result-card'>", unsafe_allow_html=True)
-            st.subheader("🎯 Hasil Klasifikasi")
-
-            # Preprocessing
-            img_resized = img.resize((224, 224))
+        elif mode == "Klasifikasi Gambar":
+            img_resized = img.resize((96, 96))  # sesuaikan ke input model
             img_array = image.img_to_array(img_resized)
-            img_array = np.expand_dims(img_array, axis=0) / 255.0
+            img_array = np.expand_dims(img_array, axis=0)
+            img_array = img_array / 255.0
 
-            # Prediksi
             prediction = classifier.predict(img_array)
             class_index = np.argmax(prediction)
-            class_labels = ["Animal", "Fashion", "Food", "Nature"]
-            result = class_labels[class_index]
+            classes = ["Animal", "Fashion", "Food", "Nature"]
+            predicted_class = classes[class_index]
 
-            st.success(f"Gambar ini termasuk kategori: **{result}** 🌼")
-            st.metric(label="Probabilitas", value=f"{np.max(prediction)*100:.2f}%")
-            st.markdown("</div>", unsafe_allow_html=True)
-else:
-    st.info("📸 Unggah gambar terlebih dahulu untuk melihat hasil deteksi atau klasifikasi ya, Sayang 💕")
+            st.success(f"🌼 Gambar ini termasuk dalam kategori: **{predicted_class}**")
+            st.write("📊 Probabilitas:", round(np.max(prediction)*100, 2), "%")
+
+# ==========================
+# ✨ Footer
+# ==========================
+st.markdown("""
+<hr style='border: 1px solid #F2B5D4;'>
+<p style='text-align: center; color: #888; font-size: 0.9em;'>
+Didesain dengan 💕 oleh <b>Meilani Bulandari</b> — Powered by YOLO & TensorFlow
+</p>
+""", unsafe_allow_html=True)
