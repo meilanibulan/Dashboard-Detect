@@ -1,5 +1,10 @@
 import os
 os.environ["OPENCV_VIDEOIO_PRIORITY_MSMF"] = "0"
+os.environ["OPENCV_VIDEOIO_PRIORITY_GSTREAMER"] = "0"
+os.environ["QT_QPA_PLATFORM"] = "offscreen"
+os.environ["MPLCONFIGDIR"] = "/tmp/matplotlib"
+os.environ["DISPLAY"] = ":0"
+
 
 import streamlit as st
 from ultralytics import YOLO
