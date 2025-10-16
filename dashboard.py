@@ -78,8 +78,8 @@ hr{ border-color:#23233a }
 # ==========================
 @st.cache_resource(show_spinner=True)
 def load_models():
-    yolo = YOLO("model/Anisa Nabila_Laporan 4.pt")               # Deteksi objek
-    clf  = tf.keras.models.load_model("model/Anisa Nabila_Laporan 2.h5")  # Klasifikasi
+    yolo = YOLO("model/Meilani Bulandari Hsb_Laporan 4.pt")               # Deteksi objek
+    clf  = tf.keras.models.load_model("model/Meilani Bulandari Hsb_Laporan 2.h5")  # Klasifikasi
     return yolo, clf
 
 yolo_model, classifier = load_models()
