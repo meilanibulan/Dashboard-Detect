@@ -130,7 +130,7 @@ with colA:
     st.markdown("<div class='header-bar'><span class='header-chip'>Vision App</span><div class='muted'>Image Classification & Object Detection</div></div>", unsafe_allow_html=True)
     st.markdown("<h1 style='margin:.8rem 0 0 0;'>My Dashboard</h1>", unsafe_allow_html=True)
 with colB:
-    st.markdown("<div class='card' style='text-align:right; height:100%; display:flex; flex-direction:column; justify-content:center;'><div class='muted'>Hi, Anisa!</div><div style='font-weight:700;'>🧠 Ready</div></div>", unsafe_allow_html=True)
+    st.markdown("<div class='card' style='text-align:right; height:100%; display:flex; flex-direction:column; justify-content:center;'><div class='muted'>Hi, Bulan!</div><div style='font-weight:700;'>🧠 Ready</div></div>", unsafe_allow_html=True)
 
 st.write("")
 
